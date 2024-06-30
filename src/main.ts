@@ -4,14 +4,20 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { clientFolder } from './rendering.js';
-import { AppModule } from './app.module.js';
 import { FastifyInstance, RawServerBase } from 'fastify';
-import { renderApp } from '../client/entry-server.js';
-import { Page } from './Page.js';
-import { join } from 'path';
-
+import { join, dirname } from 'path';
 import { uneval } from 'devalue';
+import { Page } from './Page.js';
+import { AppModule } from './app.module.js';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export const rootFolder = join(__dirname, '..');
+export const clientFolder = join(rootFolder, 'client');
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 async function bootstrapNestJs() {
   let app: NestFastifyApplication<RawServerBase>;
@@ -19,9 +25,9 @@ async function bootstrapNestJs() {
   const adapter = new FastifyAdapter();
   await adapter.register(FastifyVite as any, {
     root: clientFolder,
-    dev: true,
     spa: false,
-    clientModule: 'entry-server.ts',
+    dev: !isProduction,
+    clientModule: isProduction ? `../server/entry-server` : 'entry-server.ts',
     createRenderFunction({ renderApp }) {
       return async function ({ page }: { page: Page }) {
         const pagePath = join(
@@ -54,8 +60,6 @@ async function bootstrapNestJs() {
 
   const server = app.getHttpAdapter().getInstance() as FastifyInstance;
   await server.vite.ready();
-
-  server.decorateReply('page', null);
 
   await app.listen(3000);
 }

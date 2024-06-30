@@ -7,12 +7,12 @@ const state: {
 } = (window as any).__INITIAL_STATE__;
 
 const pages = (import.meta as any).glob('./pages/*.tsx');
-const Page = pages[`./pages/${state.componentName}.tsx`];
-
-hydrate(
-  createApp({
-    Component: Page.default,
-    props: state.props,
-  }),
-  document.getElementById('root')!,
-);
+pages[`./pages/${state.componentName}.tsx`]().then((Page) => {
+  hydrate(
+    createApp({
+      Component: Page.default,
+      props: state.props,
+    }),
+    document.getElementById('root')!,
+  );
+});
