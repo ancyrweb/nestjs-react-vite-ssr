@@ -24,6 +24,7 @@
     "@nestjs/platform-fastify": "^10.3.9",
     "@nestjs/serve-static": "^4.0.2",
     "@preact/preset-vite": "^2.8.3",
+    "devalue": "^5.0.0",
     "fastify": "^4.28.1",
     "preact": "^10.22.0",
     "preact-render-to-string": "^6.5.5",

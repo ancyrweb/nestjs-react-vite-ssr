@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 import { Page } from './Page.js';
+import { FastifyReply } from 'fastify';
 
 @Controller()
 export class AppController {
@@ -9,8 +10,16 @@ export class AppController {
   index() {
     return new Page('Home');
   }
+
   @Get('/about')
   about() {
     return new Page('About');
+  }
+
+  @Get('/api/users')
+  api() {
+    return {
+      id: '123',
+    };
   }
 }

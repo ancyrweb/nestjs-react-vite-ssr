@@ -5,5 +5,4 @@ import { preact } from '@preact/preset-vite';
 export default defineConfig({
   root: 'client',
   plugins: [preact()],
-  logLevel: 'silent',
 });

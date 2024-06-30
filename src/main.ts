@@ -6,32 +6,57 @@ import {
 } from '@nestjs/platform-fastify';
 import { clientFolder } from './rendering.js';
 import { AppModule } from './app.module.js';
+import { FastifyInstance, RawServerBase } from 'fastify';
+import { renderApp } from '../client/entry-server.js';
+import { Page } from './Page.js';
+import { join } from 'path';
+
+import { uneval } from 'devalue';
 
 async function bootstrapNestJs() {
-  const adapter = new FastifyAdapter({ logger: true });
+  let app: NestFastifyApplication<RawServerBase>;
+
+  const adapter = new FastifyAdapter();
   await adapter.register(FastifyVite as any, {
     root: clientFolder,
     dev: true,
     spa: false,
     clientModule: 'entry-server.ts',
-    createRenderFunction(config) {
-      return async () => {
-        const result = await config.render();
+    createRenderFunction({ renderApp }) {
+      return async function ({ page }: { page: Page }) {
+        const pagePath = join(
+          clientFolder,
+          'pages',
+          page.componentName + '.js',
+        );
+
+        const Component = await import(pagePath);
+
+        const result = await renderApp({
+          Component: Component.default,
+          props: page.props,
+        });
+
         return {
-          element: result.template,
+          element: result.template, // `element` is the comment inside `index.html`
+          title: page.componentName,
+          hydration: `<script>window.__INITIAL_STATE__ = ${uneval({
+            componentName: page.componentName,
+            props: page.props,
+          })};</script>`,
         };
       };
     },
   });
   (adapter as any).isMiddieRegistered = true;
 
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    adapter,
-  );
+  app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
 
-  const server = app.getHttpAdapter().getInstance() as any;
+  const server = app.getHttpAdapter().getInstance() as FastifyInstance;
   await server.vite.ready();
+
+  server.decorateReply('page', null);
+
   await app.listen(3000);
 }
 

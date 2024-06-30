@@ -29,6 +29,9 @@ importers:
       '@preact/preset-vite':
         specifier: ^2.8.3
         version: 2.8.3(@babel/core@7.24.7)(preact@10.22.0)(vite@5.3.2(@types/node@20.14.9)(terser@5.31.1))
+      devalue:
+        specifier: ^5.0.0
+        version: 5.0.0
       fastify:
         specifier: ^4.28.1
         version: 4.28.1
@@ -1274,6 +1277,9 @@ packages:
   destroy@1.2.0:
     resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
+
+  devalue@5.0.0:
+    resolution: {integrity: sha512-gO+/OMXF7488D+u3ue+G7Y4AA3ZmUnB3eHJXmBTgNHvr4ZNzl36A0ZtG+XCRNYCkYx/bFmw4qtkoFLa+wSrwAA==}
 
   dezalgo@1.0.4:
     resolution: {integrity: sha512-rXSP0bf+5n0Qonsb+SVVfNfIsimO4HEtmnIpPHY8Q1UCzKlQrDMfdobr8nJOOsRgWCyMRqeSBQzmWUMq7zvVig==}
@@ -4019,6 +4025,8 @@ snapshots:
   depd@2.0.0: {}
 
   destroy@1.2.0: {}
+
+  devalue@5.0.0: {}
 
   dezalgo@1.0.4:
     dependencies:

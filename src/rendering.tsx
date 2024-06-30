@@ -54,7 +54,7 @@ export class PageInterceptor<T> implements NestInterceptor<T, any> {
         const res = context.switchToHttp().getResponse() as FastifyReply;
 
         const Component = await import(
-          path.join(pagesFolder, `${data.title}.js`)
+          path.join(pagesFolder, `${data.componentName}.js`)
         ).then((c) => c.default);
 
         const vite = await getViteServer();
