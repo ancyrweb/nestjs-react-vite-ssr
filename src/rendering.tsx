@@ -18,8 +18,9 @@ let viteDevServer: ViteDevServer;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const clientFolder = path.join(__dirname, '..', 'client');
-const pagesFolder = path.join(clientFolder, 'pages');
+export const rootFolder = path.join(__dirname, '..');
+export const clientFolder = path.join(rootFolder, 'client');
+export const pagesFolder = path.join(clientFolder, 'pages');
 
 const resolveClientPath = (p: string) => path.join(clientFolder, p);
 

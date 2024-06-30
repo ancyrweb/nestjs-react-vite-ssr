@@ -1,9 +1,7 @@
-import { h } from 'preact';
-
 import { render as preactRender } from 'preact-render-to-string';
-import Home from './pages/Home.js';
+import { createApp } from './base.js';
 
 export async function render() {
-  const template = preactRender(<Home />);
+  const template = preactRender(createApp());
   return { template };
 }
