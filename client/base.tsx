@@ -6,5 +6,8 @@ export const createApp = ({ url, props }: { url: string; props: any }) => {
   const route = routes.find((route) => route.match(url));
   const Component = route ? route.component : Home;
 
-  return <Component {...props} />;
+  return {
+    metadata: route.metadata(props),
+    component: <Component {...props} />,
+  };
 };

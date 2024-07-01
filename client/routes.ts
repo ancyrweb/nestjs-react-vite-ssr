@@ -4,6 +4,12 @@ function removeTrailingSlash(path: string) {
   return path.endsWith('/') && path !== '/' ? path.slice(0, -1) : path;
 }
 
+function defaultMetadata() {
+  return {
+    title: '',
+  };
+}
+
 function getPageRoutes(importMap) {
   return (
     Object.keys(importMap)
@@ -25,6 +31,7 @@ function getPageRoutes(importMap) {
           path: normalizedPath,
           match: match(normalizedPath),
           component: importMap[path].default,
+          metadata: importMap[path].metadata ?? defaultMetadata,
         };
       })
   );

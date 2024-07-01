@@ -8,12 +8,12 @@ export class AppController {
 
   @Get()
   index() {
-    return new Page('Home', { name: 'Anthony' });
+    return new Page({ name: 'Anthony' });
   }
 
   @Get('/about')
   about() {
-    return new Page('About');
+    return new Page();
   }
 
   @Get('/api/users')

@@ -10,6 +10,6 @@ hydrate(
   createApp({
     url: window.location.pathname,
     props: state.props,
-  }),
+  }).component,
   document.getElementById('root')!,
 );

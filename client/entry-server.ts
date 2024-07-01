@@ -2,14 +2,14 @@ import { render as preactRender } from 'preact-render-to-string';
 import { createApp } from './base.js';
 
 export async function renderApp({ props, url }: any) {
-  const template = preactRender(
-    createApp({
-      url,
-      props,
-    }),
-  );
+  const { component, metadata } = createApp({
+    url,
+    props,
+  });
 
-  return { template };
+  const template = preactRender(component);
+
+  return { template, metadata };
 }
 
 export default {

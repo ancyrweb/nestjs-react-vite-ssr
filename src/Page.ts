@@ -1,6 +1,3 @@
 export class Page {
-  constructor(
-    public readonly componentName: string,
-    public readonly props: Record<string, any> = {},
-  ) {}
+  constructor(public readonly props: Record<string, any> = {}) {}
 }

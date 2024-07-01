@@ -2,7 +2,15 @@ import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import '../css/styles.css';
 
-export default function Home({ name }: { name: string }) {
+type Props = {
+  name: string;
+};
+
+export const metadata = (props: Props) => ({
+  title: 'Home for ' + props.name,
+});
+
+export default function Home({ name }: Props) {
   const [count, setCount] = useState(0);
   return (
     <div>

@@ -4,31 +4,29 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { FastifyInstance, FastifyRequest, RawServerBase } from 'fastify';
-import { join, dirname } from 'path';
 import { uneval } from 'devalue';
 import { NestFactory } from '@nestjs/core';
 
 import { Page } from './Page.js';
 import { AppModule } from './app.module.js';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-export const rootFolder = join(__dirname, '..');
-export const clientFolder = join(rootFolder, 'client');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 async function bootstrap() {
   let app: NestFastifyApplication<RawServerBase>;
 
+  // We must register FastifyVite before NestJS because
+  // FastifyVite loads Middie, the middleware engine of Fastify
+  // But NestJS also loads Middie for its own internal middleware system
+  // Which leads to a clash as both of them try to load Middie
   const adapter = new FastifyAdapter();
   await adapter.register(FastifyVite as any, {
     root: process.cwd(),
     spa: false,
     dev: !isProduction,
-    clientModule: 'entry-server.ts',
+    clientModule: isProduction
+      ? 'dist/server/entry-server.js'
+      : 'entry-server.ts',
     createRenderFunction({ renderApp }) {
       return async function ({
         page,
@@ -37,22 +35,24 @@ async function bootstrap() {
         page: Page;
         req: FastifyRequest;
       }) {
-        const result = await renderApp({
+        const { template, metadata } = await renderApp({
           url: req.originalUrl,
           props: page.props,
         });
 
         return {
-          element: result.template, // `element` is the comment inside `index.html`
-          title: page.componentName,
+          element: template,
+          title: metadata.title,
           hydration: `<script>window.__INITIAL_STATE__ = ${uneval({
-            componentName: page.componentName,
+            url: req.originalUrl,
             props: page.props,
           })};</script>`,
         };
       };
     },
   });
+  // Hack to prevent the Fastify adapter from registering Middie
+  // Don't remove this line or it will crash
   (adapter as any).isMiddieRegistered = true;
 
   app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
