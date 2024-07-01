@@ -1,12 +1,13 @@
-import { NestFactory } from '@nestjs/core';
 import FastifyVite from '@fastify/vite';
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { FastifyInstance, RawServerBase } from 'fastify';
+import { FastifyInstance, FastifyRequest, RawServerBase } from 'fastify';
 import { join, dirname } from 'path';
 import { uneval } from 'devalue';
+import { NestFactory } from '@nestjs/core';
+
 import { Page } from './Page.js';
 import { AppModule } from './app.module.js';
 import { fileURLToPath } from 'url';
@@ -19,27 +20,25 @@ export const clientFolder = join(rootFolder, 'client');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-async function bootstrapNestJs() {
+async function bootstrap() {
   let app: NestFastifyApplication<RawServerBase>;
 
   const adapter = new FastifyAdapter();
   await adapter.register(FastifyVite as any, {
-    root: clientFolder,
+    root: process.cwd(),
     spa: false,
     dev: !isProduction,
-    clientModule: isProduction ? `../server/entry-server` : 'entry-server.ts',
+    clientModule: 'entry-server.ts',
     createRenderFunction({ renderApp }) {
-      return async function ({ page }: { page: Page }) {
-        const pagePath = join(
-          clientFolder,
-          'pages',
-          page.componentName + '.js',
-        );
-
-        const Component = await import(pagePath);
-
+      return async function ({
+        page,
+        req,
+      }: {
+        page: Page;
+        req: FastifyRequest;
+      }) {
         const result = await renderApp({
-          Component: Component.default,
+          url: req.originalUrl,
           props: page.props,
         });
 
@@ -58,10 +57,15 @@ async function bootstrapNestJs() {
 
   app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
 
-  const server = app.getHttpAdapter().getInstance() as FastifyInstance;
-  await server.vite.ready();
+  const instance = app.getHttpAdapter().getInstance() as FastifyInstance;
 
+  await app.init();
+  await instance.vite.ready();
   await app.listen(3000);
+
+  console.log(`Server listening on http://localhost:3000`);
+
+  return app;
 }
 
-bootstrapNestJs();
+bootstrap();

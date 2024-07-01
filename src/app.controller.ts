@@ -8,7 +8,7 @@ export class AppController {
 
   @Get()
   index() {
-    return new Page('Home');
+    return new Page('Home', { name: 'Anthony' });
   }
 
   @Get('/about')

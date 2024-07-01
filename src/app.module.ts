@@ -22,6 +22,8 @@ export class PageInterceptor<T> implements NestInterceptor<T, any> {
         if (data instanceof Page) {
           const rendered = await (res as any).render({
             page: data,
+            req,
+            res,
           });
 
           return (res as any).type('text/html').html(rendered);

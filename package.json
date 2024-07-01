@@ -15,8 +15,8 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "vitest",
     "build": "pnpx rimraf dist && pnpm run build:client && pnpm run build:server && pnpm nest build",
-    "build:client": "vite build -c client/vite.config.ts --outDir dist/client --ssrManifest",
-    "build:server": "vite build -c client/vite.config.ts --outDir dist/server --ssr entry-server.ts"
+    "build:client": "vite build -c vite.config.js --outDir dist/client --ssrManifest",
+    "build:server": "vite build -c vite.config.js --outDir dist/server --ssr entry-server.ts"
   },
   "dependencies": {
     "@fastify/vite": "^6.0.6",
@@ -26,13 +26,19 @@
     "@nestjs/platform-fastify": "^10.3.9",
     "@nestjs/serve-static": "^4.0.2",
     "@preact/preset-vite": "^2.8.3",
+    "@swc/cli": "^0.4.0",
+    "@swc/core": "^1.6.6",
+    "@swc/helpers": "^0.5.11",
     "devalue": "^5.0.0",
     "fastify": "^4.28.1",
+    "path-match": "^1.2.4",
+    "path-to-regexp": "^7.0.0",
     "preact": "^10.22.0",
     "preact-render-to-string": "^6.5.5",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
-    "vite": "^5.3.2"
+    "vite": "^5.3.2",
+    "vite-plugin-node": "^3.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

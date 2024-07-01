@@ -1,18 +1,17 @@
 import { render as preactRender } from 'preact-render-to-string';
 import { createApp } from './base.js';
 
-export async function renderApp({
-  Component,
-  props,
-}: {
-  Component: any;
-  props: any;
-}) {
+export async function renderApp({ props, url }: any) {
   const template = preactRender(
     createApp({
-      Component,
+      url,
       props,
     }),
   );
+
   return { template };
 }
+
+export default {
+  renderApp,
+};

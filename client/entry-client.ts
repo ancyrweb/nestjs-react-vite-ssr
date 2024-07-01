@@ -6,13 +6,10 @@ const state: {
   props: Record<string, any>;
 } = (window as any).__INITIAL_STATE__;
 
-const pages = (import.meta as any).glob('./pages/*.tsx');
-pages[`./pages/${state.componentName}.tsx`]().then((Page) => {
-  hydrate(
-    createApp({
-      Component: Page.default,
-      props: state.props,
-    }),
-    document.getElementById('root')!,
-  );
-});
+hydrate(
+  createApp({
+    url: window.location.pathname,
+    props: state.props,
+  }),
+  document.getElementById('root')!,
+);

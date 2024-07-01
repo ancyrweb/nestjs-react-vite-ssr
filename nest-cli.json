@@ -3,12 +3,6 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": false,
-    "assets": [
-      {
-        "include": "../client/**",
-        "outDir": "dist/client"
-      }
-    ]
+    "deleteOutDir": false
   }
 }
