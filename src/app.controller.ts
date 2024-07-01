@@ -1,6 +1,5 @@
-import { Controller, Get, Res } from '@nestjs/common';
-import { Page } from './Page.js';
-import { FastifyReply } from 'fastify';
+import { Controller, Get } from '@nestjs/common';
+import { Page } from './lib.js';
 
 @Controller()
 export class AppController {

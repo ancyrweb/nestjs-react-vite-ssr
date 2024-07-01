@@ -42,7 +42,7 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       fastify:
-        specifier: ^4.28.1
+        specifier: ^4.27.0
         version: 4.28.1
       path-match:
         specifier: ^1.2.4
@@ -65,9 +65,6 @@ importers:
       vite:
         specifier: ^5.3.2
         version: 5.3.2(@types/node@20.14.9)(terser@5.31.1)
-      vite-plugin-node:
-        specifier: ^3.1.0
-        version: 3.1.0(@swc/core@1.6.6(@swc/helpers@0.5.11))(vite@5.3.2(@types/node@20.14.9)(terser@5.31.1))
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.0.0
@@ -121,7 +118,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       typescript:
-        specifier: ^5.1.3
+        specifier: ^5.5.2
         version: 5.5.2
 
 packages:
@@ -3069,15 +3066,6 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
-
-  vite-plugin-node@3.1.0:
-    resolution: {integrity: sha512-LN9byKedZaokEWcH+DTdeV7YLN34dWH7Em2ldHZ77oVGvC/uxHnK43AGPrV9+9CoOh1x9X3Yc55vW/OQYssFDQ==}
-    peerDependencies:
-      '@swc/core': ^1.2.153
-      vite: ^4.0.0
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
 
   vite@5.3.2:
     resolution: {integrity: sha512-6lA7OBHBlXUxiJxbO5aAY2fsHHzDr1q7DvXYnyZycRs2Dz+dXBWuhpWHvmljTRTpQC2uvGmUFFkSHF2vGo90MA==}
@@ -6287,17 +6275,6 @@ snapshots:
   v8-compile-cache-lib@3.0.1: {}
 
   vary@1.1.2: {}
-
-  vite-plugin-node@3.1.0(@swc/core@1.6.6(@swc/helpers@0.5.11))(vite@5.3.2(@types/node@20.14.9)(terser@5.31.1)):
-    dependencies:
-      '@rollup/pluginutils': 4.2.1
-      chalk: 4.1.2
-      debug: 4.3.5
-      vite: 5.3.2(@types/node@20.14.9)(terser@5.31.1)
-    optionalDependencies:
-      '@swc/core': 1.6.6(@swc/helpers@0.5.11)
-    transitivePeerDependencies:
-      - supports-color
 
   vite@5.3.2(@types/node@20.14.9)(terser@5.31.1):
     dependencies:
