@@ -14,14 +14,21 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
+  Module,
   NestInterceptor,
 } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 type Configuration = {
   isProduction?: boolean;
 };
 
+/**
+ * Configure fastify to serve the front-end
+ * @param adapter
+ * @param config
+ */
 export const configureFrontEnd = async (
   adapter: any,
   config?: Configuration,
@@ -57,17 +64,21 @@ export const configureFrontEnd = async (
           page: Page;
           req: FastifyRequest;
         }) {
+          // prepare the page props
           const props = {
             pageProps: page.props,
             appProps: {},
           };
 
+          // render the page using the URL for determining the component
+          // to render (using a folder-based structure)
           const { template, metadata } = await renderApp({
             url: req.originalUrl,
             props,
           });
 
-          const pageState = {
+          // serialize state to re-hydrate the page in client side
+          const hydrationState = {
             url: req.originalUrl,
             props,
           };
@@ -75,12 +86,13 @@ export const configureFrontEnd = async (
           return {
             element: template,
             title: metadata.title,
-            hydration: `<script>window.__INITIAL_STATE__ = ${uneval(pageState)};</script>`,
+            hydration: `<script>window.__INITIAL_STATE__ = ${uneval(hydrationState)};</script>`,
           };
         };
       },
     },
   });
+
   // Hack to prevent the Fastify adapter from registering Middie
   // Don't remove this line or it will crash
   (adapter as any).isMiddieRegistered = true;
@@ -88,6 +100,10 @@ export const configureFrontEnd = async (
   return adapter;
 };
 
+/**
+ * Initialize the front-end
+ * @param app
+ */
 export const initializeFrontEnd = async (
   app: NestFastifyApplication<RawServerBase>,
 ) => {
@@ -95,6 +111,9 @@ export const initializeFrontEnd = async (
   await instance.vite.ready();
 };
 
+/**
+ * Informs the interceptor to render a page as a response
+ */
 export class Page {
   constructor(public readonly props: Record<string, any> = {}) {}
 }
@@ -122,3 +141,13 @@ export class FrontEndInterceptor<T> implements NestInterceptor<T, any> {
     );
   }
 }
+
+@Module({
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: FrontEndInterceptor,
+    },
+  ],
+})
+export class FrontEndModule {}

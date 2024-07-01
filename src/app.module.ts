@@ -1,16 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller.js';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { FrontEndInterceptor } from './lib.js';
+import { FrontEndModule } from './lib.js';
 
 @Module({
-  imports: [],
+  imports: [FrontEndModule],
   controllers: [AppController],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: FrontEndInterceptor,
-    },
-  ],
+  providers: [],
 })
 export class AppModule {}
