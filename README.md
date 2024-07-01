@@ -36,3 +36,5 @@ Run `pnpm build` to build the app and `pnpm start` to start the production serve
 ## TODO
 
 - Mechanism to provide contextual props to every page (auth, session...)
+- Richer metadata system
+- Testability

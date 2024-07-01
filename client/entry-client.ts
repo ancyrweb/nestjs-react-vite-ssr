@@ -2,13 +2,16 @@ import { hydrate } from 'preact';
 import { createApp } from './base.js';
 
 const state: {
-  componentName: string;
-  props: Record<string, any>;
+  url: string;
+  props: {
+    pageProps: Record<string, any>;
+    appProps: Record<string, any>;
+  };
 } = (window as any).__INITIAL_STATE__;
 
 hydrate(
   createApp({
-    url: window.location.pathname,
+    url: state.url,
     props: state.props,
   }).component,
   document.getElementById('root')!,

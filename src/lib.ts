@@ -48,28 +48,37 @@ export const configureFrontEnd = async (
     clientModule: isProduction
       ? 'dist/server/entry-server.js'
       : 'entry-server.ts',
-    createRenderFunction({ renderApp }) {
-      return async function ({
-        page,
-        req,
-      }: {
-        page: Page;
-        req: FastifyRequest;
-      }) {
-        const { template, metadata } = await renderApp({
-          url: req.originalUrl,
-          props: page.props,
-        });
+    renderer: {
+      createRenderFunction({ renderApp }) {
+        return async function ({
+          page,
+          req,
+        }: {
+          page: Page;
+          req: FastifyRequest;
+        }) {
+          const props = {
+            pageProps: page.props,
+            appProps: {},
+          };
 
-        return {
-          element: template,
-          title: metadata.title,
-          hydration: `<script>window.__INITIAL_STATE__ = ${uneval({
+          const { template, metadata } = await renderApp({
             url: req.originalUrl,
-            props: page.props,
-          })};</script>`,
+            props,
+          });
+
+          const pageState = {
+            url: req.originalUrl,
+            props,
+          };
+
+          return {
+            element: template,
+            title: metadata.title,
+            hydration: `<script>window.__INITIAL_STATE__ = ${uneval(pageState)};</script>`,
+          };
         };
-      };
+      },
     },
   });
   // Hack to prevent the Fastify adapter from registering Middie

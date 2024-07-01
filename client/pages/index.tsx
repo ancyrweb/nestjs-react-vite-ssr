@@ -3,18 +3,20 @@ import { useState } from 'preact/hooks';
 import '../css/styles.css';
 
 type Props = {
-  name: string;
+  pageProps: {
+    name: string;
+  };
 };
 
 export const metadata = (props: Props) => ({
-  title: 'Home for ' + props.name,
+  title: 'Home for ' + props.pageProps.name,
 });
 
-export default function Home({ name }: Props) {
+export default function Home({ pageProps }: Props) {
   const [count, setCount] = useState(0);
   return (
     <div>
-      <h1>Hello {name} !</h1>
+      <h1>Hello {pageProps.name} !</h1>
       <button
         onClick={() => {
           setCount(count + 1);
