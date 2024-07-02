@@ -20,8 +20,15 @@ import {
 import { map, Observable } from 'rxjs';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
+declare module 'fastify' {
+  interface FastifyReply {
+    appProps: Record<string, any>;
+  }
+}
+
 type Configuration = {
   isProduction?: boolean;
+  clientModule?: string;
 };
 
 /**
@@ -34,7 +41,7 @@ export const configureFrontEnd = async (
   config?: Configuration,
 ) => {
   // silly workaround for https://github.com/microsoft/TypeScript/issues/42873
-  adapter = adapter as FastifyAdapter;
+  const ourAdapter = adapter as FastifyAdapter;
 
   const isProduction =
     typeof config?.isProduction === 'boolean'
@@ -45,34 +52,33 @@ export const configureFrontEnd = async (
   // FastifyVite loads Middie, the middleware engine of Fastify
   // But NestJS also loads Middie for its own internal middleware system
   // Which leads to a clash as both of them try to load Middie
-  await adapter.register(FastifyVite as any, {
+  await ourAdapter.register(FastifyVite as any, {
     root: process.cwd(),
     spa: false,
-    dev:
-      typeof config?.isProduction === 'boolean'
-        ? !config.isProduction
-        : !isProduction,
-    clientModule: isProduction
-      ? 'dist/server/entry-server.js'
-      : 'entry-server.ts',
+    dev: !isProduction,
+    clientModule:
+      config?.clientModule ??
+      (isProduction ? 'dist/server/entry-server.js' : 'entry-server.ts'),
     renderer: {
-      createRenderFunction({ renderApp }) {
+      createRenderFunction({ render }) {
         return async function ({
           page,
           req,
+          res,
         }: {
           page: Page;
           req: FastifyRequest;
+          res: FastifyReply;
         }) {
           // prepare the page props
           const props = {
             pageProps: page.props,
-            appProps: {},
+            appProps: res.appProps,
           };
 
           // render the page using the URL for determining the component
           // to render (using a folder-based structure)
-          const { template, metadata } = await renderApp({
+          const { template, metadata } = await render({
             url: req.originalUrl,
             props,
           });
@@ -95,6 +101,7 @@ export const configureFrontEnd = async (
 
   // Hack to prevent the Fastify adapter from registering Middie
   // Don't remove this line or it will crash
+  // A better fix is introduced in 10.3.10 (the skipMiddie flag)
   (adapter as any).isMiddieRegistered = true;
 
   return adapter;
@@ -108,6 +115,12 @@ export const initializeFrontEnd = async (
   app: NestFastifyApplication<RawServerBase>,
 ) => {
   const instance = app.getHttpAdapter().getInstance() as FastifyInstance;
+
+  instance.addHook('onRequest', (req, res, done) => {
+    res.appProps = {};
+    done();
+  });
+
   await instance.vite.ready();
 };
 
